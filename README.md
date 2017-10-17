@@ -3,13 +3,20 @@ Self-Driving Car Engineer Nanodegree Program
 
 ## Mpc optimizer
  The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a  simple Global Kinematic Model.
+
 ## The Model
+main.cpp we have the main code to comunicate with the simulator,
+
 
 ## Timestep Length and Elapsed Duration (N & dt)
+Have a large N would be nice but is computationally critical for the the system because the solver will take more time to compute the solution, experimentally a good choice for N is 10, with N = 20 the cost taking longer to compute and at there is a high probability that the car at some point will come out of the track. Same computional problem with dt, but this time if it is too small, good choice for dt is 0.1
 
 ## Polynomial Fitting and MPC Preprocessing
+we have a line to follow  and a speed to optimize calculation a cost function
+to follow the line we use a polyom made up of points, six waypoints to fit with a 3rd order polynom
 
 ## Model Predictive Control with Latency
+To simulate the 100 ms delay you can set in the main the same state transition function used in file mpc.cpp
 
 ---
 
