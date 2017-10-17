@@ -11,6 +11,13 @@ Self-Driving Car Engineer Nanodegree Program
 
 ![MPC Setup ](/images/model_predictive_control_setup.png)
 
+ First set up the MPC loop:
+* Define the duration *T* of the trajectory by chosing the number of timesteps in the horizon *N* and time elapses between * actuations *dt*;
+* Define the vehicle model and constraints on the actuators *[δ,a]*;
+* Define the cost function;
+
+![MPC Setup ](/images/model_predictive_control_loop1.png)
+
 
 ## Timestep Length and Elapsed Duration (N & dt)
 Have a large N would be nice but is computationally critical for the the system because the solver will take more time to compute the solution, experimentally a good choice for N is 10, with N = 20 the cost taking longer to compute and at there is a high probability that the car at some point will come out of the track. Same computional problem with dt, but this time if it is too small, good choice for dt is 0.1
