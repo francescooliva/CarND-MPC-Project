@@ -98,32 +98,78 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          double steer_value;
-          double throttle_value;
+
+
+          for(unsigned int i = 0; i < ptsx.size(); i++) {
+
+            // shift car reference angle to 90 degrees
+            // x and y corners will be at 0 pos
+            double shift_x = (ptsx[i] - px);
+            double shift_y = (ptsy[i] - py);
+            ptsx[i] =  cos(-psi) * shift_x - sin(-psi) * shift_y;
+            ptsy[i] =  sin(-psi) * shift_x + cos(-psi) * shift_y;
+          }
+
+          // Convertion from double to Eigen type vector to input in polyfit function
+          double* ptrx = &ptsx[0];
+          double* ptry = &ptsy[0];
+          Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
+          Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
+
+          // Fitting a polynomial to the waypoints, 3rd order polinomio
+          auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
+
+          // Calculating the cross track and orientation error
+          // calculate the cross track error
+          double cte = polyeval(coeffs, 0) ;
+          // calculate the orientation error
+          double epsi = -atan(coeffs[1]);
+          Eigen::VectorXd state(6);
+          state << 0, 0, 0, v, cte, epsi;
+          double steer_value = j[1]["steering_angle"];
+          double throttle_value = j[1]["throttle"];
+          auto vars = mpc.Solve(state, coeffs);
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = throttle_value;
+          msgJson["throttle"] = vars[1];
+          double Lf = 2.67;
+          msgJson["steering_angle"] = vars[0]/(deg2rad(25) * Lf);
 
-          //Display the MPC predicted trajectory 
+          // Green line
+          //Display the MPC predicted trajectory
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
-
+          for(unsigned int i = 2; i < vars.size(); i++){
+            // every even value will go in x, otherwise in y
+            if(i%2==0)
+              mpc_x_vals.push_back(vars[i]);
+            else mpc_y_vals.push_back(vars[i]);
+          }
           msgJson["mpc_x"] = mpc_x_vals;
           msgJson["mpc_y"] = mpc_y_vals;
 
-          //Display the waypoints/reference line
+          // Yellow line
+          // for visual debugging
+          //Display the waypoints/reference line we are trying to follow
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
+          // define point spacing in the x axis
+          double poly_inc = 2.5;
+          // point to track in next step
+          int num_points = 25;
 
+          for(unsigned int i = 1; i < num_points; i++){
+            next_x_vals.push_back(poly_inc * i);
+            next_y_vals.push_back(polyeval(coeffs, poly_inc * i));
+          }
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 

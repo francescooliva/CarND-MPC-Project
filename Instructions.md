@@ -1,16 +1,6 @@
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
-## Mpc optimizer
- The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a  simple Global Kinematic Model.
-## The Model
-
-## Timestep Length and Elapsed Duration (N & dt)
-
-## Polynomial Fitting and MPC Preprocessing
-
-## Model Predictive Control with Latency
-
 ---
 
 ## Dependencies
