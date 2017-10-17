@@ -2,10 +2,14 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ## Mpc optimizer
- The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a  simple Global Kinematic Model.
+ The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a  simple Global Kinematic Model.  
+ Model Predictive Control involves simulating different actuator inputs predicting the resulting trajectory and selecting the one with minimum cost.  
+ Known the current state and the reference trajectory to follow, at each time step we optimize different actuator inputs in order to minimize the cost of our predicted trajectory. Once it is found the lowest cost trajectory and implemented the set of actuation commands this brings the vehicle in the new state used to calculate a new optimal trajectory, then in the same way the process is repeated and new inputs are calculated over new horizons(The Receding Horizon Control Principle)
+
 
 ## The Model
-main.cpp we have the main code to comunicate with the simulator,
+
+![MPC Setup ](/images/model_predictive_control_setup.png)
 
 
 ## Timestep Length and Elapsed Duration (N & dt)
