@@ -2,8 +2,10 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ## Mpc optimizer
- The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a simple Global Kinematic Model that ignore tire forces, gravity, and mass and consider state(posiions, speed and orientatation) and actuator(throttle and steering) vector inputs.
+ The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a simple Global Kinematic Model that ignore tire forces, gravity, and mass and consider state(posiions, speed and orientatation) and actuator(throttle and steering) vector inputs.  
+
 ![Kinematic model ](/images/global_kinematic_model.png)
+
 This simplification reduces the accuracy of the model making it more tractable. The model developed equations determine the *next state (state at t+1)* from our *state vector at t* and our actuator values. It's added a variable to our state called *L​f*​​ which measures the distance between the front of the vehicle and its center of gravity. The larger the vehicle , the slower the turn rate.  
 So Model Predictive Control involves simulating different actuator inputs predicting the resulting trajectory and selecting the one with minimum cost. Known the current state and the reference trajectory to follow, at each time step we optimize different actuator inputs in order to minimize the cost of our predicted trajectory. Once it is found the lowest cost trajectory and implemented the set of actuation commands this brings the vehicle in the new state used to calculate a new optimal trajectory, then in the same way the process is repeated and new inputs are calculated over new horizons(The Receding Horizon Control Principle)
 
@@ -29,11 +31,12 @@ The Solver used in this project is called IPOPT, short for "Interior Point OPTim
 Have a large N would be nice but is computationally critical for the the system because the solver will take more time to compute the solution, experimentally a good choice for N is 10, with N = 20 the cost taking longer to compute and at there is a high probability that the car at some point will come out of the track. Same computional problem with dt, but this time if it is too small, good choice for dt is 0.1
 
 ## Polynomial Fitting and MPC Preprocessing
-we have a line to follow  and a speed to optimize calculation a cost function
-to follow the line we use a polyom made up of points, six waypoints to fit with a 3rd order polynom
+The reference trajectory is passed to the control block as a 3rd order polynomial. In the project code polynomial is fitted with waypoints (x, y) in C++ using Eigen. Have been implemented to functions:
+* *polyfit* (line 38 in file main.cpp) to fit a 3rd order polynomial to the given x and y coordinates representing waypoints.
+* *polyeval* (line 49) to evaluate y values of given x coordinates.
 
 ## Model Predictive Control with Latency
-To simulate the 100 ms delay you can set in the main the same state transition function used in file mpc.cpp
+To simulate the 100 ms delay you can set in the main the same state transition function used in file mpc.cpp. In main.cpp I defined a function *globalKinematicLatency* at line 75 and called every time at line 173 as first state implementation. Using dt = 0.1 it's like forwarding the state in time by 100 ms
 
 ## Final video
 Video of the MPC solution tested on the simulator
