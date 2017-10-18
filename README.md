@@ -2,9 +2,10 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ## Mpc optimizer
- The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a  simple Global Kinematic Model.  
- Model Predictive Control involves simulating different actuator inputs predicting the resulting trajectory and selecting the one with minimum cost.  
- Known the current state and the reference trajectory to follow, at each time step we optimize different actuator inputs in order to minimize the cost of our predicted trajectory. Once it is found the lowest cost trajectory and implemented the set of actuation commands this brings the vehicle in the new state used to calculate a new optimal trajectory, then in the same way the process is repeated and new inputs are calculated over new horizons(The Receding Horizon Control Principle)
+ The main goal of the project is to implement in C++ Model Predictive Control to drive the car around the track using a simple Global Kinematic Model that ignore tire forces, gravity, and mass and consider state(posiions, speed and orientatation) and actuator(throttle and steering) vector inputs.
+![Kinematic model ](/images/global_kinematic_model.png)
+This simplification reduces the accuracy of the model making it more tractable. The model developed equations determine the *next state (state at t+1)* from our *state vector at t* and our actuator values. It's added a variable to our state called *L​f*​​ which measures the distance between the front of the vehicle and its center of gravity. The larger the vehicle , the slower the turn rate.  
+So Model Predictive Control involves simulating different actuator inputs predicting the resulting trajectory and selecting the one with minimum cost. Known the current state and the reference trajectory to follow, at each time step we optimize different actuator inputs in order to minimize the cost of our predicted trajectory. Once it is found the lowest cost trajectory and implemented the set of actuation commands this brings the vehicle in the new state used to calculate a new optimal trajectory, then in the same way the process is repeated and new inputs are calculated over new horizons(The Receding Horizon Control Principle)
 
 
 ## The Model
@@ -16,11 +17,12 @@ Self-Driving Car Engineer Nanodegree Program
 * Define the vehicle model and constraints on the actuators *[δ,a]*;
 * Define the cost function;
 
-![MPC Setup ](/images/model_predictive_control_loop_12.png)
+![MPC Loop ](/images/model_predictive_control_loop_12.png)
 
 Then is called the optimizarion solver:
 * The solver uses the initial state, model constraints and cost function returning a vector of control inputs that minimize the cost function;
-* We apply the first control input *[δ1,a1]* to the vehicle and the repeat the loop;
+* We apply the first control input *[δ1,a1]* to the vehicle and the repeat the loop;  
+
 The Solver used in this project is called IPOPT, short for "Interior Point OPTimizer", a software library for large scale nonlinear optimization of continuous systems
 
 ## Timestep Length and Elapsed Duration (N & dt)
@@ -32,6 +34,10 @@ to follow the line we use a polyom made up of points, six waypoints to fit with 
 
 ## Model Predictive Control with Latency
 To simulate the 100 ms delay you can set in the main the same state transition function used in file mpc.cpp
+
+## Final video
+Video of the MPC solution tested on the simulator
+https://www.youtube.com/watch?v=KeM_CI4eRAA
 
 ---
 
